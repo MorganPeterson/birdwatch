@@ -9,7 +9,7 @@ import DataTable from './components/DataTable.vue'
       <div class="col-4">
         <EntryForm title="Observation" />
       </div>
-      <div class="col-8">
+      <div class="col-8 border rounded rounded-2 ">
         <DataTable />
       </div>
     </div>

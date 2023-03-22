@@ -51,15 +51,15 @@ func connectDatabase() error {
 	return nil
 }
 
-// runInsert inserts an entry into the `entries` table of the database. Returns
-// `true, nil` if successful and `false, error` if not.
+// runInsert inserts or replaces an entry into the `entries` table of the
+// database. Returns `true, nil` if successful and `false, error` if not.
 func runInsert(oneEntry Entry) error {
 	tx, err := DB.Begin()
 	if err != nil {
 		return err
 	}
 
-	stmt, err := DB.Prepare("INSERT INTO entries(entry, sex, activity, time_begin, time_end, time_total, time_break, location_begin, location_end) values(?,?,?,?,?,?,?,?,?)")
+	stmt, err := DB.Prepare("INSERT OR REPLACE INTO entries(entry, sex, activity, time_begin, time_end, time_total, time_break, location_begin, location_end) values(?,?,?,?,?,?,?,?,?)")
 	if err != nil {
 		return err
 	}

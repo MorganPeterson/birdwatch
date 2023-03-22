@@ -71,13 +71,13 @@ function submitObservation(data) {
   const validatedData = validate(data)
   AxiosCall('post', '/entry', validatedData).then((response) => {
     if (response.error === null) {
-      Store.add(validate(data))
+      Store.add(validatedData)
       reset('entryForm')
       showToast('Entry Added', 'success')
     } else {
       switch (response.error) {
         case 1001:
-          showToast('Error: Duplicate entry number?', 'error')
+          showToast('Error: Database Insertion', 'error')
           break
         default:
           showToast('Error: Wrong data entered?', 'error')
@@ -92,10 +92,10 @@ function submitObservation(data) {
   <FormKit
     type="form"
     id="entryForm"
-    submit-label="Create"
-    form-class="p-2 border rounded"
-    :submit-attrs="{ inputClass: 'btn btn-primary' }"
+    :actions="false"
     @submit="submitObservation"
+    #default="{ state: { valid } }"
+    form-class="p-2 border rounded"
   >
     <h3 class="mb-3">{{ title }}</h3>
     <div class="row">
@@ -186,5 +186,10 @@ function submitObservation(data) {
         </FormKit>
       </div>
     </section>
+    <FormKit
+      type="submit"
+      :disabled="!valid"
+      input-class="btn btn-success"
+    />
   </FormKit>
 </template>

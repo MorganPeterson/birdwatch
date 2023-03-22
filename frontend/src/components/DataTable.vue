@@ -28,7 +28,9 @@ onMounted(() => {
 </script>
 
 <template>
-  <table id="tableComponent" class="table table-bordered table-striped">
+  <table
+    id="tableComponent"
+    class="table table-striped table-hover">
     <thead>
       <tr>
         <th rowspan="2">Entry</th>
@@ -56,4 +58,5 @@ onMounted(() => {
   </table>
 </template>
 
-<style scoped></style>
+<style scoped>
+</style>

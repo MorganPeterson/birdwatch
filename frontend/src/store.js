@@ -24,7 +24,14 @@ const Store = reactive({
   add(value) {
     value.time_begin = convertMinutes(value.time_begin)
     value.time_end = convertMinutes(value.time_end)
-    this.data.push(value)
+
+    const found = this.data.find(entry => entry.entry === value.entry)
+
+    if (found === undefined) {
+      this.data.push(value)
+    } else {
+      this.data[value.entry-1] = {...found, ...value}
+    }
   },
   load(response) {
     this.data = response.map((v) => {
