@@ -14,14 +14,22 @@ defineProps({
 /*
  * Convert a time string of HH:MM to number of seconds.
  *
- * @param t {string} - a string of format "00:00"
- * @return number
+ * @param t {string} - a string of format "HH:MM"
+ * @return { Number } - total minutes converted from time string
  */
 const timeToMinutes = (t) => {
   const [h, m] = t.split(':').map((x) => parseInt(x))
   return h * 60 + m
 }
 
+/*
+ * Deconstructs nested object received from form into a data object that the
+ * API expects.
+ * 
+ * @param { Object } - Form data
+ * 
+ * return { Object }
+ */
 const validate = (data) => {
   const b = timeToMinutes(data.time.begin)
   const e = timeToMinutes(data.time.end)
@@ -38,6 +46,12 @@ const validate = (data) => {
   }
 }
 
+/*
+ * Convert form data to API object and POST data to API. Resets form upon
+ * successful completion.
+ *
+ * @param { Object } data - Form data object
+ */
 function submitObservation(data) {
   const validatedData = validate(data)
   AxiosCall('post', '/entry', validatedData).then(() => {
@@ -147,5 +161,3 @@ function submitObservation(data) {
     </section>
   </FormKit>
 </template>
-
-<style scoped></style>

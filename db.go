@@ -2,24 +2,27 @@ package main
 
 import (
 	"database/sql"
-	
+
 	_ "modernc.org/sqlite"
 )
 
+// A Entry is a full data struct to be entered into the database
 type Entry struct {
-	Entry int `json:"entry"`
-	Sex string `json:"sex"`
-	Activity string `json:"activity"`
-	TimeBegin int `json:"time_begin"`
-	TimeEnd int `json:"time_end"`
-	TimeTotal int `json:"time_total"`
+	Entry     int    `json:"entry"`
+	Sex       string `json:"sex"`
+	Activity  string `json:"activity"`
+	TimeBegin int    `json:"time_begin"`
+	TimeEnd   int    `json:"time_end"`
+	TimeTotal int    `json:"time_total"`
 	TimeBreak string `json:"time_break"`
-	LocBegin string `json:"location_begin"`
-	LocEnd string `json:"location_end"`
+	LocBegin  string `json:"location_begin"`
+	LocEnd    string `json:"location_end"`
 }
 
+// DB is a global variable that contains the sqlite db instance
 var DB *sql.DB
 
+// create table if it doesn't exist
 const create string = `
 CREATE TABLE IF NOT EXISTS entries (
 entry INTEGER NOT NULL PRIMARY KEY,
@@ -31,7 +34,11 @@ time_total INTEGER,
 time_break TEXT,
 location_begin TEXT,
 location_end TEXT);`
- 
+
+// connectDatabase opens database if it exists and creates it if it doesn't.
+// If the table `entries` does not exist, it creates that as well. Returns
+// nil if no error. SIDE-EFFECT - loads database instance into global 
+// variable DB.
 func connectDatabase() error {
 	db, err := sql.Open("sqlite", "./entries.db")
 	if err != nil {
@@ -44,6 +51,8 @@ func connectDatabase() error {
 	return nil
 }
 
+// runInsert inserts an entry into the `entries` table of the database. Returns
+// `true, nil` if successful and `false, error` if not.
 func runInsert(oneEntry Entry) (bool, error) {
 	tx, err := DB.Begin()
 	if err != nil {
@@ -68,13 +77,15 @@ func runInsert(oneEntry Entry) (bool, error) {
 	return true, nil
 }
 
+// runSelect runs a query against the database fetching all entries. Returns
+// a slice of all entries or `nil, error` if there is a problem.
 func runSelect() ([]Entry, error) {
 	rows, err := DB.Query("SELECT * FROM entries")
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	
+
 	entries := make([]Entry, 0)
 
 	for rows.Next() {
@@ -94,6 +105,6 @@ func runSelect() ([]Entry, error) {
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return entries, err
 }

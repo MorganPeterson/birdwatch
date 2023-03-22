@@ -4,6 +4,7 @@ import { onMounted } from 'vue'
 import { AxiosCall } from '../api'
 import { Store } from '../store'
 
+/* All fields from Entry returned by the API */
 const fields = [
   'entry',
   'time_begin',
@@ -16,6 +17,7 @@ const fields = [
   'location_end'
 ]
 
+/* Fetch all entries and load them into the store */
 onMounted(() => {
   AxiosCall('get').then((response) => {
     if (response.error === null) {
@@ -54,4 +56,4 @@ onMounted(() => {
   </table>
 </template>
 
-<style></style>
+<style scoped></style>
