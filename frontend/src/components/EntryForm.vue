@@ -1,8 +1,10 @@
 <script setup>
 import { reset } from '@formkit/core'
-
+import { useToast } from 'vue-toast-notification'
 import { AxiosCall } from '../api'
 import { Store } from '../store'
+
+import 'vue-toast-notification/dist/theme-bootstrap.css'
 
 defineProps({
   title: {
@@ -46,6 +48,19 @@ const validate = (data) => {
   }
 }
 
+const showToast = (msg, type) => {
+  const toast = useToast()
+  const instance = toast.open({
+    message: msg,
+    type: type,
+    position: 'top-right'
+  })
+
+  setTimeout(() => {
+    instance.dismiss()
+  }, 2000)
+}
+
 /*
  * Convert form data to API object and POST data to API. Resets form upon
  * successful completion.
@@ -54,9 +69,21 @@ const validate = (data) => {
  */
 function submitObservation(data) {
   const validatedData = validate(data)
-  AxiosCall('post', '/entry', validatedData).then(() => {
-    Store.add(validate(data))
-    reset('entryForm')
+  AxiosCall('post', '/entry', validatedData).then((response) => {
+    if (response.error === null) {
+      Store.add(validate(data))
+      reset('entryForm')
+      showToast('Entry Added', 'success')
+    } else {
+      switch (response.error) {
+        case 1001:
+          showToast('Error: Duplicate entry number?', 'error')
+          break
+        default:
+          showToast('Error: Wrong data entered?', 'error')
+          break
+      }
+    }
   })
 }
 </script>

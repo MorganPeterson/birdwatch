@@ -35,7 +35,7 @@ async function AxiosCall(method = 'get', url = endpoint, data = null) {
     })
     result = { error: null, ...response.data }
   } catch (e) {
-    result = { error: e.status, data: null }
+    result = { error: e.response.data.error, data: null }
   }
   return result
 }

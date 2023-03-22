@@ -53,15 +53,15 @@ func connectDatabase() error {
 
 // runInsert inserts an entry into the `entries` table of the database. Returns
 // `true, nil` if successful and `false, error` if not.
-func runInsert(oneEntry Entry) (bool, error) {
+func runInsert(oneEntry Entry) error {
 	tx, err := DB.Begin()
 	if err != nil {
-		return false, err
+		return err
 	}
 
 	stmt, err := DB.Prepare("INSERT INTO entries(entry, sex, activity, time_begin, time_end, time_total, time_break, location_begin, location_end) values(?,?,?,?,?,?,?,?,?)")
 	if err != nil {
-		return false, err
+		return err
 	}
 	defer stmt.Close()
 	_, err = stmt.Exec(oneEntry.Entry, oneEntry.Sex, oneEntry.Activity,
@@ -69,12 +69,12 @@ func runInsert(oneEntry Entry) (bool, error) {
 		oneEntry.TimeBreak, oneEntry.LocBegin, oneEntry.LocEnd)
 
 	if err != nil {
-		return false, err
+		return err
 	}
 
 	tx.Commit()
 
-	return true, nil
+	return nil
 }
 
 // runSelect runs a query against the database fetching all entries. Returns

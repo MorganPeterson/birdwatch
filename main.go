@@ -13,6 +13,8 @@ import (
 var (
 	HOST = "localhost"
 	PORT = "8080"
+	ERR_POST_WRONG_DATA = 1000
+	ERR_POST_DB_ERROR = 1001
 )
 
 // contains our embedded JavaScript code from vue
@@ -44,20 +46,17 @@ func postEntry(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&newEntry); err != nil {
 		log.Printf("birdwatch: Entry Post: %v\n", err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": ERR_POST_WRONG_DATA})
 		return
 	}
 
 	// insert entry into the database
-	success, err := runInsert(newEntry)
+	err := runInsert(newEntry)
 	if err != nil {
 		log.Printf("birdwatch: DB insert error: %v\n", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "error writing to database"})
-	} else if success {
-		c.JSON(http.StatusCreated, gin.H{"error": nil})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": ERR_POST_DB_ERROR})
 	} else {
-		log.Printf("birdwatch: DB Unknown error: %v\n", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusCreated, gin.H{"error": nil})
 	}
 }
 
